@@ -5,6 +5,7 @@ on:
     paths:
       - "**"
       - ".github/workflows/terraform.yml"
+
   push:
     branches:
       - main
@@ -33,9 +34,11 @@ jobs:
           AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
         run: |
           if [ -z "$AWS_ROLE_ARN" ]; then
-            echo "AWS_ROLE_ARN repository secret is not configured."
+            echo "ERROR: AWS_ROLE_ARN repository secret is not configured."
             exit 1
           fi
+
+          echo "AWS_ROLE_ARN is configured."
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -43,6 +46,9 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: GitHubActionsTerraform
           aws-region: us-west-2
+
+      - name: Verify AWS identity
+        run: aws sts get-caller-identity
 
       - name: Terraform format check
         run: terraform fmt -check -recursive
