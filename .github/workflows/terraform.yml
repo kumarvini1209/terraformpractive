@@ -1,4 +1,4 @@
-name: Terraform
+name: TerraformYml
 
 on:
   pull_request:
@@ -28,19 +28,10 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Check AWS role configuration
-        env:
-          AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
-        run: |
-          if [ -z "$AWS_ROLE_ARN" ]; then
-            echo "AWS_ROLE_ARN repository secret is not configured."
-            exit 1
-          fi
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-to-assume: arn:aws:iam::101553891888:role/GitHubActionsTerraform
           role-session-name: GitHubActionsTerraform
           aws-region: us-west-2
 
